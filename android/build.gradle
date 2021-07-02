@@ -65,7 +65,6 @@ dependencies {
 
 
     /// 崩溃分析
-    ompile('com.aliyun.ams:alicloud-android-ha-adapter:1.1.5.0-open')
     compile('com.aliyun.ams:alicloud-android-ha-crashreporter:1.2.5')
 
 
