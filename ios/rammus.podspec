@@ -17,7 +17,7 @@ A new Flutter plugin for AliCloud push.
   s.dependency 'Flutter'
   s.dependency 'AlicloudPush', '~> 1.9.9'   # 移动推送
   s.dependency 'AlicloudAPM', '~> 1.1.1'    # 性能分析
-  s.dependency 'AlicloudMANLight', '~> 1.0.1'   # 移动数据分析
+  s.dependency 'AlicloudMANLight', '~> 1.1.0'   # 移动数据分析
   s.dependency 'AlicloudUT', '~> 5.2.0.8'   #
   s.dependency 'AlicloudCrash', '~> 1.2.0'  # 崩溃分析
 
