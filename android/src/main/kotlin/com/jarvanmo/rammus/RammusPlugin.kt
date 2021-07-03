@@ -106,12 +106,12 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
             val appInfo = application.packageManager
                     .getApplicationInfo(application.packageName, PackageManager.GET_META_DATA)
 
-            val aliAppKey = appInfo.metaData.getString("com.xiaomi.push.client.app_key")
-            val aliAppVersion = appInfo.metaData.getString("com.xiaomi.push.client.app_version")
-            val aliAppSecret = appInfo.metaData.getString("com.xiaomi.push.client.app_secret")
-            val aliChannel = appInfo.metaData.getString("com.xiaomi.push.client.app_channel")
-            val aliUserNick = appInfo.metaData.getString("com.xiaomi.push.client.app_user_nick")
-            val aliRsaPublicKey = appInfo.metaData.getString("com.xiaomi.push.client.app_rsa_public_key")
+            val aliAppKey = appInfo.metaData.getString("com.emas.app_key")
+            val aliAppVersion = appInfo.metaData.getString("com.emas.app_version")
+            val aliAppSecret = appInfo.metaData.getString("com.emas.app_secret")
+            val aliChannel = appInfo.metaData.getString("com.emas.app_channel")
+            val aliUserNick = appInfo.metaData.getString("com.emas.app_user_nick")
+            val aliRsaPublicKey = appInfo.metaData.getString("com.emas.app_rsa_public_key")
 
 
             val config = AliHaConfig()
