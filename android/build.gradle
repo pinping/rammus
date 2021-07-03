@@ -74,10 +74,16 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.8.1"//配置项
 
     //线上测试
-    implementation 'com.aliyun.ams:alicloud-android-ha-adapter:1.1.5.0-open'
-    implementation 'com.aliyun.ams:alicloud-android-apm:1.0.10.0-open'
+    implementation ('com.aliyun.ams:alicloud-android-ha-adapter:1.1.5.0-open'){
+        exclude(module:'alicloud-android-utdid')
+    }
+    implementation ('com.aliyun.ams:alicloud-android-apm:1.0.10.0-open'){
+        exclude(module:'alicloud-android-utdid')
+    }
 
     /// 移动数据分析
-    compile 'com.aliyun.ams:alicloud-android-man:1.2.5'
+    implementation ('com.aliyun.ams:alicloud-android-man:1.2.5'){
+        exclude(module:'alicloud-android-utdid')
+    }
 
 }
