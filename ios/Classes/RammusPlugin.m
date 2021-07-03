@@ -72,6 +72,8 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
 //    _launchOptions = launchOptions;
     [self registerAPNS:application];
     [self initCloudPush];
+    [self initApmCrashService];
+    [self initAnalysisService];
     [self listenerOnChannelOpened];
     [self registerMessageReceive];
     [CloudPushSDK sendNotificationAck:launchOptions];
@@ -180,6 +182,26 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
             NSLog(@"Push SDK init failed, error: %@", res.error);
         }
     }];
+}
+
+/// 崩溃分析 / 性能分析
+- (void)initApmCrashService {
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+    NSString *appVersion = [infoDictionary objectForKey:@"CFBundleShortVersionString"]; //app版本，会上报
+    NSString *channel = @"App Store";     //渠道标记，自定义，会上报
+    NSString *nick = @"xx";        //nick 昵称，自定义，会上报
+    
+    [[AlicloudAPMProvider alloc] autoInitWithAppVersion:appVersion channel:channel nick:nick];
+
+    [[AlicloudCrashProvider alloc] autoInitWithAppVersion:appVersion channel:channel nick:nick];
+    [AlicloudHAProvider start];
+    
+}
+
+/// 移动数据分析
+- (void)initAnalysisService {
+    ALBBMANAnalytics *man = [ALBBMANAnalytics getInstance];
+    [man autoInit];
 }
 
 #pragma mark Channel Opened
