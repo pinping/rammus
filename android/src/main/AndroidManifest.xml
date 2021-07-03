@@ -2,8 +2,8 @@
   package="com.jarvanmo.rammus">
     <application>
         <service android:name=".RammusPushIntentService"
-            android:exported="false"
-            >
+            android:exported="false">
+
             <intent-filter>
                 <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
             </intent-filter>
