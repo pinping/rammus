@@ -101,17 +101,29 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
 
         /// 崩溃分析
         @JvmStatic
-        fun initApmCrashService(appKey, appVersion, appSecret, channel,userNick, rsaPublicKey) {
+        fun initApmCrashService(application: Application) {
+
+            val appInfo = application.packageManager
+                    .getApplicationInfo(application.packageName, PackageManager.GET_META_DATA)
+
+            val aliAppKey = appInfo.metaData.getString("com.xiaomi.push.client.app_key")
+            val aliAppVersion = appInfo.metaData.getString("com.xiaomi.push.client.app_version")
+            val aliAppSecret = appInfo.metaData.getString("com.xiaomi.push.client.app_secret")
+            val aliChannel = appInfo.metaData.getString("com.xiaomi.push.client.app_channel")
+            val aliUserNick = appInfo.metaData.getString("com.xiaomi.push.client.app_user_nick")
+            val aliRsaPublicKey = appInfo.metaData.getString("com.xiaomi.push.client.app_rsa_public_key")
+
+
             val config = AliHaConfig()
-            config.appKey = "333467078"
-            config.appVersion = "1.0.0"
-            config.appSecret = "a8c9357857fb42a8a99518084f4ee8b1"
-            config.channel = "mqc_test"
-            config.userNick = null
+            config.appKey = aliAppKey
+            config.appVersion = aliAppVersion
+            config.appSecret = aliAppSecret
+            config.channel = aliChannel
+            config.userNick = aliUserNick
             config.application = this
             config.context = getApplicationContext()
             config.isAliyunos = false
-            config.rsaPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJBrmUo1qeVLQLGb1RqEiwgX5T90Aht8vQeLGmaPL4j3PjmXFcq4ANiU7m4ycAHs76uq" //配置项
+            config.rsaPublicKey = aliRsaPublicKey //配置项
 
             //启动CrashReporter
             AliHaAdapter.getInstance().addPlugin(Plugin.crashreporter) /// 崩溃分析
