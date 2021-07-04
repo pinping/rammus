@@ -143,6 +143,29 @@ Future<CommonCallbackResult> unbindAccount() async {
       iosError: result["iosError"]);
 }
 
+/// 页面数据埋点
+Future<CommonCallbackResult> pageHitAnalytics(String jsonStr) async {
+  var result = await _channel.invokeMethod("pageHitAnalytics", jsonStr);
+  return CommonCallbackResult(
+      isSuccessful: result["isSuccessful"],
+      response: result["response"],
+      errorCode: result["errorCode"],
+      errorMessage: result["errorMessage"],
+      iosError: result["iosError"]);
+}
+
+/// 自定义数据埋点
+Future<CommonCallbackResult> customHitAnalytics(String jsonStr) async {
+  var result = await _channel.invokeMethod("customHitAnalytics", jsonStr);
+  return CommonCallbackResult(
+      isSuccessful: result["isSuccessful"],
+      response: result["response"],
+      errorCode: result["errorCode"],
+      errorMessage: result["errorMessage"],
+      iosError: result["iosError"]);
+}
+
+
 ///Android only
 Future<CommonCallbackResult> bindPhoneNumber(String phoneNumber) async {
   var result = await _channel.invokeMethod("bindPhoneNumber", phoneNumber);
