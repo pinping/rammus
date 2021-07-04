@@ -4,24 +4,22 @@
 #import <AlicloudAPM/AlicloudAPMProvider.h>
 #import <AlicloudHAUtil/AlicloudHAProvider.h>
 
-
 NSString *_isSuccessful = @"isSuccessful";
 
-@implementation RammusPlugin {
+@implementation RammusPlugin
+{
     // iOS 10通知中心
     UNUserNotificationCenter *_notificationCenter;
 }
 
-
 + (void)registerWithRegistrar:(NSObject <FlutterPluginRegistrar> *)registrar {
     FlutterMethodChannel *channel = [FlutterMethodChannel
-            methodChannelWithName:@"com.jarvanmo/rammus"
-                  binaryMessenger:[registrar messenger]];
+                                     methodChannelWithName:@"com.jarvanmo/rammus"
+                                           binaryMessenger:[registrar messenger]];
     RammusPlugin *instance = [[RammusPlugin alloc] initWithRegistrar:registrar methodChannel:channel];
     [registrar addMethodCallDelegate:instance channel:channel];
     [registrar addApplicationDelegate:instance];
 }
-
 
 //__weak NSDictionary *_launchOptions;
 
@@ -38,18 +36,17 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([@"initCloudChannel" isEqualToString:call.method]) {
-
     } else if ([@"deviceId" isEqualToString:call.method]) {
         result([CloudPushSDK getDeviceId]);
     } else if ([@"bindAccount" isEqualToString:call.method]) {
         [self bindAccount:call result:result];
     } else if ([@"unbindAccount" isEqualToString:call.method]) {
         [self unbindAccount:call result:result];
-    }  else if ([@"bindPhoneNumber" isEqualToString:call.method]) {
-           [self bindPhoneNumber:call result:result];
-       } else if ([@"unbindPhoneNumber" isEqualToString:call.method]) {
-           [self unbindPhoneNumber:call result:result];
-       } else if ([@"bindTag" isEqualToString:call.method]) {
+    } else if ([@"bindPhoneNumber" isEqualToString:call.method]) {
+        [self bindPhoneNumber:call result:result];
+    } else if ([@"unbindPhoneNumber" isEqualToString:call.method]) {
+        [self unbindPhoneNumber:call result:result];
+    } else if ([@"bindTag" isEqualToString:call.method]) {
         [self bindTag:call result:result];
     } else if ([@"unbindTag" isEqualToString:call.method]) {
         [self unbindTag:call result:result];
@@ -61,17 +58,24 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
         [self removeAlias:call result:result];
     } else if ([@"listAliases" isEqualToString:call.method]) {
         [self listAliases:call result:result];
-    }else if([@"configureNotificationPresentationOption" isEqualToString:call.method]){
+    } else if ([@"configureNotificationPresentationOption" isEqualToString:call.method]) {
         [self configureNotificationPresentationOption:call result:result];
-    }else if([@"setupNotificationManager" isEqualToString:call.method]){
+    } else if ([@"setupNotificationManager" isEqualToString:call.method]) {
         result(@YES);
-    }else if([@"badgeClean" isEqualToString:call.method]){
-             [self badgeClean:call result:result];
-    }else {
+    } else if ([@"badgeClean" isEqualToString:call.method]) {
+        [self badgeClean:call result:result];
+    } else if ([@"userRegister" isEqualToString:call.method]) {
+        [self userRegister:call result:result];
+    } else if ([@"updateUserAccount" isEqualToString:call.method]) {
+        [self updateUserAccount:call result:result];
+    } else if ([@"pageHitAnalytics" isEqualToString:call.method]) {
+        [self pageHitAnalytics:call result:result];
+    } else if ([@"customHitAnalytics" isEqualToString:call.method]) {
+        [self customHitAnalytics:call result:result];
+    } else {
         result(FlutterMethodNotImplemented);
     }
 }
-
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 //    _launchOptions = launchOptions;
@@ -86,13 +90,12 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
     return NO;
 }
 
-
 #pragma mark APNs Register
 
 /**
  *	向APNs注册，获取deviceToken用于推送
  *
- *	@param 	application
+ *	@param  application
  */
 
 - (void)registerAPNS:(UIApplication *)application {
@@ -110,8 +113,8 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
                 NSLog(@"User authored notification.");
                 // 向APNs注册，获取deviceToken
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [application registerForRemoteNotifications];
-                });
+                                   [application registerForRemoteNotifications];
+                               });
             } else {
                 // not granted
                 NSLog(@"User denied notification.");
@@ -122,9 +125,9 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
         [application registerUserNotificationSettings:
-                [UIUserNotificationSettings settingsForTypes:
-                                (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge)
-                                                  categories:nil]];
+         [UIUserNotificationSettings settingsForTypes:
+          (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge)
+                                           categories:nil]];
         [application registerForRemoteNotifications];
 #pragma clang diagnostic pop
     } else {
@@ -132,7 +135,7 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:
-                (UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+         (UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
 #pragma clang diagnostic pop
     }
 }
@@ -171,7 +174,6 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
     NSLog(@"didFailToRegisterForRemoteNotificationsWithError %@", error);
 }
 
-
 #pragma mark SDK Init
 
 - (void)initCloudPush {
@@ -195,12 +197,11 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
     NSString *appVersion = [infoDictionary objectForKey:@"CFBundleShortVersionString"]; //app版本，会上报
     NSString *channel = @"App Store";     //渠道标记，自定义，会上报
     NSString *nick = @"xx";        //nick 昵称，自定义，会上报
-    
+
     [[AlicloudAPMProvider alloc] autoInitWithAppVersion:appVersion channel:channel nick:nick];
 
     [[AlicloudCrashProvider alloc] autoInitWithAppVersion:appVersion channel:channel nick:nick];
     [AlicloudHAProvider start];
-    
 }
 
 /// 移动数据分析
@@ -219,18 +220,15 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
                                              selector:@selector(onChannelOpened:)
                                                  name:@"CCPDidChannelConnectedSuccess"
                                                object:nil];
-
 }
-
 
 /**
 *	推送通道打开回调
 *
-*	@param 	notification
+*	@param  notification
 */
 - (void)onChannelOpened:(NSNotification *)notification {
 }
-
 
 #pragma mark Receive Message
 
@@ -247,15 +245,13 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
 /**
  *	处理到来推送消息
  *
- *	@param 	notification
+ *	@param  notification
  */
 - (void)onMessageReceived:(NSNotification *)notification {
-
     CCPSysMessage *message = [notification object];
     NSString *title = [[NSString alloc] initWithData:message.title encoding:NSUTF8StringEncoding];
     NSString *body = [[NSString alloc] initWithData:message.body encoding:NSUTF8StringEncoding];
 //    NSLog(@"Receive message title: %@, content: %@.", title, body);
-
 
     if (![NSThread isMainThread]) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -264,15 +260,14 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
 //            }
 
             [_methodChannel invokeMethod:@"onMessageArrived" arguments:@{
-                    @"title": title,
-                    @"content": body
+                 @"title": title,
+                 @"content": body
             }];
-
         });
     } else {
         [_methodChannel invokeMethod:@"onMessageArrived" arguments:@{
-                @"title": title,
-                @"content": body
+             @"title": title,
+             @"content": body
         }];
 //        if (tempVO.messageContent != nil) {
 //            [self insertPushMessage:tempVO];
@@ -280,12 +275,10 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
     }
 }
 
-
 /**
  *  处理iOS 10通知(iOS 10+)
  */
 - (void)handleiOS10Notification:(UNNotification *)notification fromFront:(BOOL)fromFront {
-
     UNNotificationRequest *request = notification.request;
     UNNotificationContent *content = request.content;
     NSDictionary *extras = content.userInfo;
@@ -336,24 +329,23 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
     }
 }
 
--(NSString *)convertToJsonData:(NSDictionary *)dict{
+- (NSString *)convertToJsonData:(NSDictionary *)dict {
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
     NSString *jsonString;
     if (!jsonData) {
-        NSLog(@"%@",error);
-    }else{
+        NSLog(@"%@", error);
+    } else {
         jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
     }
     NSMutableString *mutStr = [NSMutableString stringWithString:jsonString];
-    NSRange range = {0,jsonString.length};
+    NSRange range = { 0, jsonString.length };
     //去掉字符串中的空格
     [mutStr replaceOccurrencesOfString:@" " withString:@"" options:NSLiteralSearch range:range];
-    NSRange range2 = {0,mutStr.length};
+    NSRange range2 = { 0, mutStr.length };
     //去掉字符串中的换行符
     [mutStr replaceOccurrencesOfString:@"\n" withString:@"" options:NSLiteralSearch range:range2];
     return mutStr;
-
 }
 
 /**
@@ -371,7 +363,6 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
 //    completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
 }
 
-
 /**
  *  触发通知动作时回调，比如点击、删除通知和点击自定义action(iOS 10+)
  */
@@ -386,7 +377,6 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
     }
     // 通知dismiss，category创建时传入UNNotificationCategoryOptionCustomDismissAction才可以触发
     if ([userAction isEqualToString:UNNotificationDismissActionIdentifier]) {
-
         [_methodChannel invokeMethod:@"onNotificationRemoved" arguments:response.notification.request.identifier];
 //        NSLog(@"User dismissed the notification.");
     }
@@ -404,18 +394,16 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
     completionHandler();
 }
 
-
 - (void)bindAccount:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [CloudPushSDK bindAccount:(NSString *) call.arguments withCallback:^(CloudPushCallbackResult *res) {
+    [CloudPushSDK bindAccount:(NSString *)call.arguments withCallback:^(CloudPushCallbackResult *res) {
         if (res.success) {
             if (res.data == nil) {
-                result(@{_isSuccessful: @YES});
+                result(@{ _isSuccessful: @YES });
             } else {
-                result(@{_isSuccessful: @YES, @"response": res.data});
-
-            };
+                result(@{ _isSuccessful: @YES, @"response": res.data });
+            }
         } else {
-            result(@{_isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error]});
+            result(@{ _isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error] });
         }
     }];
 }
@@ -424,21 +412,87 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
     [CloudPushSDK unbindAccount:^(CloudPushCallbackResult *res) {
         if (res.success) {
             if (res.data == nil) {
-                result(@{_isSuccessful: @YES});
+                result(@{ _isSuccessful: @YES });
             } else {
-                result(@{_isSuccessful: @YES, @"response": res.data});
-
-            };
+                result(@{ _isSuccessful: @YES, @"response": res.data });
+            }
         } else {
-            result(@{_isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error]});
+            result(@{ _isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error] });
         }
     }];
-
 }
 
+/// 用户注册
+- (void)userRegister:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSDictionary *objDict = [self dictionaryWithJsonString:call.arguments];
+    NSString *userNick = (objDict[@"userNick"] == (id)[NSNull null]) ? nil : objDict[@"userNick"];
+    
+    [[ALBBMANAnalytics getInstance] userRegister:userNick];
+}
+
+/// 用户信息
+- (void)updateUserAccount:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSDictionary *objDict = [self dictionaryWithJsonString:call.arguments];
+    NSString *userNick = (objDict[@"userNick"] == (id)[NSNull null]) ? nil : objDict[@"userNick"];
+    NSString *userId = (objDict[@"userId"] == (id)[NSNull null]) ? nil : objDict[@"userId"];
+
+    [[ALBBMANAnalytics getInstance] updateUserAccount:userNick userid:userId];
+}
+
+/// 页面数据埋点
+- (void)pageHitAnalytics:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSDictionary *objDict = [self dictionaryWithJsonString:call.arguments];
+    
+    
+    NSString *pageName = (objDict[@"pageName"] == (id)[NSNull null]) ? nil : objDict[@"pageName"];
+    NSString *referPageName = (objDict[@"referPageName"] == (id)[NSNull null]) ? nil : objDict[@"referPageName"];
+    int duration = (objDict[@"duration"] == (id)[NSNull null]) ? 0 : [objDict[@"duration"] intValue];
+    NSDictionary *properties = (objDict[@"properties"] == (id)[NSNull null]) ? nil : objDict[@"properties"];
+    
+    
+    ALBBMANPageHitBuilder *pageHitBuilder = [[ALBBMANPageHitBuilder alloc] init];
+    // 设置页面refer
+    [pageHitBuilder setReferPage:referPageName];
+    // 设置页面名称
+    [pageHitBuilder setPageName:pageName];
+    // 设置页面停留时间
+    [pageHitBuilder setDurationOnPage:duration];
+    // 设置页面事件扩展参数
+    [pageHitBuilder setProperties:properties];
+    // 组装日志并发送
+    [[[ALBBMANAnalytics getInstance] getDefaultTracker] send:[pageHitBuilder build]];
+    
+    
+}
+
+/// 自定义数据埋点
+- (void)customHitAnalytics:(FlutterMethodCall *)call result:(FlutterResult)result {
+    
+    NSDictionary *objDict = [self dictionaryWithJsonString:call.arguments];
+    
+    NSString *eventName = (objDict[@"pageName"] == (id)[NSNull null]) ? nil : objDict[@"pageName"];
+    NSString *pageName = (objDict[@"referPageName"] == (id)[NSNull null]) ? nil : objDict[@"referPageName"];
+    int duration = (objDict[@"duration"] == (id)[NSNull null]) ? 0 : [objDict[@"duration"] intValue];
+    NSDictionary *properties = (objDict[@"properties"] == (id)[NSNull null]) ? nil : objDict[@"properties"];
+    
+    
+    ALBBMANCustomHitBuilder *customBuilder = [[ALBBMANCustomHitBuilder alloc] init];
+    // 设置自定义事件标签
+    [customBuilder setEventLabel:eventName];
+    // 设置自定义事件页面名称
+    [customBuilder setEventPage:pageName];
+    // 设置自定义事件持续时间
+    [customBuilder setDurationOnEvent:duration];
+    // 设置自定义事件扩展参数
+    [customBuilder setProperties:properties];
+    
+    [[[ALBBMANAnalytics getInstance] getDefaultTracker] send:[customBuilder build]];
+    
+    
+}
 
 - (void)bindPhoneNumber:(FlutterMethodCall *)call result:(FlutterResult)result {
-    result(@{_isSuccessful: @YES});
+    result(@{ _isSuccessful: @YES });
 
 //    [CloudPushSDK bindAccount:(NSString *) call.arguments withCallback:^(CloudPushCallbackResult *res) {
 //        if (res.success) {
@@ -455,7 +509,7 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
 }
 
 - (void)unbindPhoneNumber:(FlutterMethodCall *)call result:(FlutterResult)result {
-       result(@{_isSuccessful: @YES});
+    result(@{ _isSuccessful: @YES });
 //    [CloudPushSDK unbindAccount:^(CloudPushCallbackResult *res) {
 //        if (res.success) {
 //            if (res.data == nil) {
@@ -468,152 +522,151 @@ UNNotificationPresentationOptions _notificationPresentationOption = UNNotificati
 //            result(@{_isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error]});
 //        }
 //    }];
-
 }
 
-
 - (void)bindTag:(FlutterMethodCall *)call result:(FlutterResult)result {
-
 //    (title == (id) [NSNull null]) ? nil : title
-    NSNumber *target = (call.arguments[@"target"] == (id) [NSNull null]) ? @1 : call.arguments[@"target"];
-    NSString *alias = (call.arguments[@"alias"] == (id) [NSNull null]) ? nil : call.arguments[@"alias"];
+    NSNumber *target = (call.arguments[@"target"] == (id)[NSNull null]) ? @1 : call.arguments[@"target"];
+    NSString *alias = (call.arguments[@"alias"] == (id)[NSNull null]) ? nil : call.arguments[@"alias"];
     [CloudPushSDK bindTag:target.intValue withTags:call.arguments[@"tags"] withAlias:alias withCallback:^(CloudPushCallbackResult *res) {
         if (res.success) {
             if (res.data == nil) {
-                result(@{_isSuccessful: @YES});
+                result(@{ _isSuccessful: @YES });
             } else {
-                result(@{_isSuccessful: @YES, @"response": res.data});
-
-            };
+                result(@{ _isSuccessful: @YES, @"response": res.data });
+            }
         } else {
-            result(@{_isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error]});
+            result(@{ _isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error] });
         }
     }];
 }
 
 - (void)unbindTag:(FlutterMethodCall *)call result:(FlutterResult)result {
-    NSNumber *target = (call.arguments[@"target"] == (id) [NSNull null]) ? @1 : call.arguments[@"target"];
-    NSString *alias = (call.arguments[@"alias"] == (id) [NSNull null]) ? nil : call.arguments[@"alias"];
+    NSNumber *target = (call.arguments[@"target"] == (id)[NSNull null]) ? @1 : call.arguments[@"target"];
+    NSString *alias = (call.arguments[@"alias"] == (id)[NSNull null]) ? nil : call.arguments[@"alias"];
     [CloudPushSDK unbindTag:target.intValue withTags:call.arguments[@"tags"] withAlias:alias withCallback:^(CloudPushCallbackResult *res) {
         if (res.success) {
             if (res.data == nil) {
-                result(@{_isSuccessful: @YES});
+                result(@{ _isSuccessful: @YES });
             } else {
-                result(@{_isSuccessful: @YES, @"response": res.data});
-
-            };
+                result(@{ _isSuccessful: @YES, @"response": res.data });
+            }
         } else {
-            result(@{_isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error]});
+            result(@{ _isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error] });
         }
     }];
 }
 
-
 - (void)listTags:(FlutterMethodCall *)call result:(FlutterResult)result {
-    NSNumber *target = (call.arguments == (id) [NSNull null]) ? @1 : call.arguments;
+    NSNumber *target = (call.arguments == (id)[NSNull null]) ? @1 : call.arguments;
     [CloudPushSDK listTags:target.intValue withCallback:^(CloudPushCallbackResult *res) {
         if (res.success) {
             if (res.data == nil) {
-                result(@{_isSuccessful: @YES});
+                result(@{ _isSuccessful: @YES });
             } else {
-                result(@{_isSuccessful: @YES, @"response": res.data});
-
-            };
+                result(@{ _isSuccessful: @YES, @"response": res.data });
+            }
         } else {
-            result(@{_isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error]});
+            result(@{ _isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error] });
         }
     }];
 }
 
-
 - (void)addAlias:(FlutterMethodCall *)call result:(FlutterResult)result {
-    NSString *alias = (call.arguments == (id) [NSNull null]) ? nil : call.arguments;
+    NSString *alias = (call.arguments == (id)[NSNull null]) ? nil : call.arguments;
     [CloudPushSDK addAlias:alias withCallback:^(CloudPushCallbackResult *res) {
         if (res.success) {
             if (res.data == nil) {
-                result(@{_isSuccessful: @YES});
+                result(@{ _isSuccessful: @YES });
             } else {
-                result(@{_isSuccessful: @YES, @"response": res.data});
-
-            };
+                result(@{ _isSuccessful: @YES, @"response": res.data });
+            }
         } else {
-            result(@{_isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error]});
+            result(@{ _isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error] });
         }
     }];
 }
 
-
 - (void)removeAlias:(FlutterMethodCall *)call result:(FlutterResult)result {
-    NSString *alias = (call.arguments == (id) [NSNull null]) ? nil : call.arguments;
+    NSString *alias = (call.arguments == (id)[NSNull null]) ? nil : call.arguments;
     [CloudPushSDK removeAlias:alias withCallback:^(CloudPushCallbackResult *res) {
         if (res.success) {
             if (res.data == nil) {
-                result(@{_isSuccessful: @YES});
+                result(@{ _isSuccessful: @YES });
             } else {
-                result(@{_isSuccessful: @YES, @"response": res.data});
-
-            };
+                result(@{ _isSuccessful: @YES, @"response": res.data });
+            }
         } else {
-            result(@{_isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error]});
+            result(@{ _isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error] });
         }
     }];
 }
 
-
 - (void)listAliases:(FlutterMethodCall *)call result:(FlutterResult)result {
-
     [CloudPushSDK listAliases:^(CloudPushCallbackResult *res) {
         if (res.success) {
             if (res.data == nil) {
-                result(@{_isSuccessful: @YES});
+                result(@{ _isSuccessful: @YES });
             } else {
-                result(@{_isSuccessful: @YES, @"response": res.data});
-
-            };
+                result(@{ _isSuccessful: @YES, @"response": res.data });
+            }
         } else {
-            result(@{_isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error]});
+            result(@{ _isSuccessful: @NO, @"errorCode": @(res.error.code), @"errorMessage": res.error.domain, @"iosError": [NSString stringWithFormat:@"%@", res.error] });
         }
     }];
 }
-
 
 - (void)configureNotificationPresentationOption:(FlutterMethodCall *)call result:(FlutterResult)result {
 //    {"none": none, "sound": sound, "alert": alert, "badge": badge});
 
     BOOL none = [call.arguments[@"none"] boolValue];
-    if(none){
-        _notificationPresentationOption = _notificationPresentationOption|UNNotificationPresentationOptionNone;
+    if (none) {
+        _notificationPresentationOption = _notificationPresentationOption | UNNotificationPresentationOptionNone;
     }
 
     BOOL sound = [call.arguments[@"sound"] boolValue];
-    if(sound){
-        _notificationPresentationOption = _notificationPresentationOption |UNNotificationPresentationOptionSound;
+    if (sound) {
+        _notificationPresentationOption = _notificationPresentationOption | UNNotificationPresentationOptionSound;
     }
 
     BOOL alert = [call.arguments[@"alert"] boolValue];
-    if(alert){
+    if (alert) {
         _notificationPresentationOption = _notificationPresentationOption | UNNotificationPresentationOptionAlert;
     }
 
     BOOL badge = [call.arguments[@"badge"] boolValue];
-    if(badge){
+    if (badge) {
         _notificationPresentationOption = _notificationPresentationOption | UNNotificationPresentationOptionBadge;
     }
 
     result(@YES);
-
 }
 
 - (void)badgeClean:(FlutterMethodCall *)call result:(FlutterResult)result {
-
     int num = [call.arguments[@"num"] intValue];
 
     [CloudPushSDK syncBadgeNum:num withCallback:^(CloudPushCallbackResult *res) {
-
     }];
 
     result(@YES);
-
 }
+
+- (NSDictionary *)dictionaryWithJsonString:(NSString *)jsonString {
+    
+    if (jsonString == nil) {
+        return nil;
+    }
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *err;
+    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                        options:NSJSONReadingMutableContainers
+                                                          error:&err];
+    if (err) {
+        NSLog(@"json解析失败：%@", err);
+        return nil;
+    }
+    return dic;
+}
+
 
 @end

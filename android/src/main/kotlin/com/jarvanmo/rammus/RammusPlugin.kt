@@ -524,19 +524,21 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
 
     /// 移动数据分析
 
+    class UserHit(val usernick: String)
     //
     private fun userRegister(call: MethodCall, result: Result){
         val jsonString = call.arguments as String?
-        MANServiceProvider.getService().getMANAnalytics().userRegister(jsonString)
+        val jsonObj = JSON.parseObject(jsonString, UserHit::class.java)
+        MANServiceProvider.getService().getMANAnalytics().userRegister(jsonObj.usernick)
     }
 
-    class UserHit(val usernick: String,
-                  val userid: String)
+    class UserUpdateHit(val usernick: String,
+                        val userid: String)
     // 用户信息
     private fun updateUserAccount(call: MethodCall, result: Result){
         val jsonString = call.arguments as String?
-        val jsonObj = JSON.parseObject(jsonString, UserHit::class.java)
-        MANServiceProvider.getService().getMANAnalytics().updateUserAccount(jsonObj.usernick, jsonObj.usernick)
+        val jsonObj = JSON.parseObject(jsonString, UserUpdateHit::class.java)
+        MANServiceProvider.getService().getMANAnalytics().updateUserAccount(jsonObj.usernick, jsonObj.userid)
     }
 
 
