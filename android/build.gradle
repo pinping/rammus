@@ -52,6 +52,8 @@ dependencies {
         exclude(module:'alicloud-android-utdid')
     }
 
+    api 'com.alibaba:fastjson:1.2.73'
+
     api 'com.aliyun.ams:alicloud-android-third-push:3.1.0@aar'
     /*implementation 'com.aliyun.ams:huawei-push:2.6.3.305'
     implementation 'com.aliyun.ams:huawei-push-base:2.6.3.305'
@@ -66,7 +68,7 @@ dependencies {
 
 
     /// 崩溃分析
-    compile('com.aliyun.ams:alicloud-android-ha-crashreporter:1.2.5')
+    implementation('com.aliyun.ams:alicloud-android-ha-crashreporter:1.2.5')
 
 
     /// 性能分析

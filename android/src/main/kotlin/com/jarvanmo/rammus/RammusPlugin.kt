@@ -8,11 +8,14 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Handler
 import android.util.Log
+import com.alibaba.fastjson.*
 import com.alibaba.ha.adapter.AliHaAdapter
 import com.alibaba.ha.adapter.AliHaConfig
 import com.alibaba.ha.adapter.Plugin
 import com.alibaba.sdk.android.man.MANService
 import com.alibaba.sdk.android.man.MANServiceProvider
+import com.alibaba.sdk.android.man.MANPageHitBuilder
+import com.alibaba.sdk.android.man.MANHitBuilders
 import com.alibaba.sdk.android.push.CommonCallback
 import com.alibaba.sdk.android.push.huawei.HuaWeiRegister
 import com.alibaba.sdk.android.push.noonesdk.PushServiceFactory
@@ -34,6 +37,7 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
             RammusPushHandler.methodChannel = channel
             channel.setMethodCallHandler(RammusPlugin(registrar, channel))
         }
+
         @JvmStatic
         fun initPushService(application: Application){
             PushServiceFactory.init(application.applicationContext)
@@ -103,7 +107,6 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
             }
         }
 
-
         /// 崩溃分析
         @JvmStatic
         fun initApmCrashService(application: Application) {
@@ -137,7 +140,6 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
             AliHaAdapter.getInstance().start(config)
         }
 
-
         /// 移动数据分析
         @JvmStatic
         fun initAnalysisService(application: Application) {
@@ -163,7 +165,7 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
             // String appSecret = "******";
             // manService.getMANAnalytics().init(this, getApplicationContext(), appKey, appSecret);
             // 通过此接口关闭页面自动打点功能，详见文档4.2
-            manService.getMANAnalytics().turnOffAutoPageTrack()
+            // manService.getMANAnalytics().turnOffAutoPageTrack()
             // 若AndroidManifest.xml 中的 android:versionName 不能满足需求，可在此指定
             // 若在上述两个地方均没有设置appversion，上报的字段默认为null
             manService.getMANAnalytics().setAppVersion("1.0.0")
@@ -187,6 +189,8 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
             "setupNotificationManager" -> setupNotificationManager(call, result)
             "bindPhoneNumber" -> bindPhoneNumber(call, result)
             "unbindPhoneNumber" -> unbindPhoneNumber(result)
+            "pageHitAnalytics" -> pageHitAnalytics(call, result)
+            "customHitAnalytics" ->customHitAnalytics(call, result)
             else -> result.notImplemented()
         }
 
@@ -515,4 +519,44 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
         result.success(true)
     }
 
+
+
+    /// 移动数据分析
+    class PageHit(val pageName: String,
+                       val referPageName: String,
+                       val duration: Long,
+                       val properties: Map<String, String>)
+    // 页面埋点
+    private fun pageHitAnalytics(call: MethodCall, result: Result){
+
+        val jsonString = call.arguments as String?
+        val jsonObj:PageHit = JSON.parseObject(jsonString, PageHit::class.java)
+
+        val hitBuilder = MANPageHitBuilder(jsonObj.pageName);
+        hitBuilder.setReferPage(jsonObj.referPageName);
+        hitBuilder.setDurationOnPage(jsonObj.duration);
+        hitBuilder.setProperties(jsonObj.properties);
+        MANServiceProvider.getService().getMANAnalytics().getDefaultTracker().send(hitBuilder.build());
+
+        result.success(true)
+    }
+
+    class CustomHit(val eventName: String,
+                        val pageName: String,
+                        val duration: Long,
+                        val properties: Map<String, String>)
+    // 自定义事件埋点
+    private fun customHitAnalytics(call: MethodCall, result: Result){
+
+        val jsonString = call.arguments as String?
+        val jsonObj:CustomHit = JSON.parseObject(jsonString, CustomHit::class.java)
+
+        val hitBuilder = MANHitBuilders.MANCustomHitBuilder(jsonObj.eventName)
+        hitBuilder.setDurationOnEvent(jsonObj.duration)
+        hitBuilder.setEventPage(jsonObj.pageName)
+        hitBuilder.setProperties(jsonObj.properties)
+        MANServiceProvider.getService().getMANAnalytics().getDefaultTracker().send(hitBuilder.build())
+
+        result.success(true)
+    }
 }
