@@ -143,6 +143,28 @@ Future<CommonCallbackResult> unbindAccount() async {
       iosError: result["iosError"]);
 }
 
+/// 用户注册
+Future<CommonCallbackResult> userRegister(String jsonStr) async {
+  var result = await _channel.invokeMethod("customHitAnalytics", jsonStr);
+  return CommonCallbackResult(
+      isSuccessful: result["isSuccessful"],
+      response: result["response"],
+      errorCode: result["errorCode"],
+      errorMessage: result["errorMessage"],
+      iosError: result["iosError"]);
+}
+
+/// 用户信息
+Future<CommonCallbackResult> updateUserAccount(String jsonStr) async {
+  var result = await _channel.invokeMethod("customHitAnalytics", jsonStr);
+  return CommonCallbackResult(
+      isSuccessful: result["isSuccessful"],
+      response: result["response"],
+      errorCode: result["errorCode"],
+      errorMessage: result["errorMessage"],
+      iosError: result["iosError"]);
+}
+
 /// 页面数据埋点
 Future<CommonCallbackResult> pageHitAnalytics(String jsonStr) async {
   var result = await _channel.invokeMethod("pageHitAnalytics", jsonStr);
@@ -201,7 +223,7 @@ Future<CommonCallbackResult> unbindPhoneNumber() async {
 ///alias 别名（仅当target = 3时生效）
 ///callback 回调
 Future<CommonCallbackResult> bindTag(
-    {@required CloudPushServiceTarget? target,
+    {required CloudPushServiceTarget? target,
     List<String>? tags,
     String? alias}) async {
   var result = await _channel.invokeMethod("bindTag", {
@@ -229,7 +251,7 @@ Future<CommonCallbackResult> bindTag(
 ///alias 别名（仅当target = 3时生效）
 ///callback 回调
 Future<CommonCallbackResult> unbindTag(
-    {@required CloudPushServiceTarget? target,
+    {required CloudPushServiceTarget? target,
     List<String>? tags,
     String? alias}) async {
   var result = await _channel.invokeMethod("unbindTag", {

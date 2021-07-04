@@ -189,6 +189,8 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
             "setupNotificationManager" -> setupNotificationManager(call, result)
             "bindPhoneNumber" -> bindPhoneNumber(call, result)
             "unbindPhoneNumber" -> unbindPhoneNumber(result)
+            "userRegister" -> userRegister(call, result)
+            "updateUserAccount" -> updateUserAccount(call, result)
             "pageHitAnalytics" -> pageHitAnalytics(call, result)
             "customHitAnalytics" ->customHitAnalytics(call, result)
             else -> result.notImplemented()
@@ -520,8 +522,24 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
     }
 
 
-
     /// 移动数据分析
+
+    //
+    private fun userRegister(call: MethodCall, result: Result){
+        val jsonString = call.arguments as String?
+        MANServiceProvider.getService().getMANAnalytics().userRegister(jsonString)
+    }
+
+    class UserHit(val usernick: String,
+                  val userid: String)
+    // 用户信息
+    private fun updateUserAccount(call: MethodCall, result: Result){
+        val jsonString = call.arguments as String?
+        val jsonObj = JSON.parseObject(jsonString, UserHit::class.java)
+        MANServiceProvider.getService().getMANAnalytics().updateUserAccount(jsonObj.usernick, jsonObj.usernick)
+    }
+
+
     class PageHit(val pageName: String,
                        val referPageName: String,
                        val duration: Long,
