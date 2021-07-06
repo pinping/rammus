@@ -11,5 +11,7 @@ class MyApplication:FlutterApplication() {
     override fun onCreate() {
         super.onCreate()
         RammusPlugin.initPushService(this)
+        RammusPlugin.initApmCrashService(this)
+        RammusPlugin.initAnalysisService(this)
     }
 }
