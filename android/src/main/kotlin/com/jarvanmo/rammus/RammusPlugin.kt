@@ -524,7 +524,14 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
 
     /// 移动数据分析
 
-    class UserHit(val usernick: String)
+    class UserHit {
+        val usernick: String
+
+        constructor(usernick: String) {
+            this.usernick = usernick
+        }
+    }
+
     //
     private fun userRegister(call: MethodCall, result: Result){
         val jsonString = call.arguments as String?
@@ -532,8 +539,16 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
         MANServiceProvider.getService().getMANAnalytics().userRegister(jsonObj.usernick)
     }
 
-    class UserUpdateHit(val usernick: String,
-                        val userid: String)
+    class UserUpdateHit {
+        val usernick: String
+        val userid: String
+
+        constructor(usernick: String, userid: String) {
+            this.usernick = usernick
+            this.userid = userid
+        }
+    }
+
     // 用户信息
     private fun updateUserAccount(call: MethodCall, result: Result){
         val jsonString = call.arguments as String?
@@ -542,10 +557,20 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
     }
 
 
-    class PageHit(val pageName: String,
-                       val referPageName: String,
-                       val duration: Long,
-                       val properties: Map<String, String>)
+    class PageHit {
+        val pageName: String
+        val referPageName: String
+        val duration: Long
+        val properties: Map<String, String>
+
+        constructor(pageName: String, referPageName: String, duration: Long, properties: Map<String, String>) {
+            this.pageName = pageName
+            this.referPageName = referPageName
+            this.duration = duration
+            this.properties = properties
+        }
+    }
+
     // 页面埋点
     private fun pageHitAnalytics(call: MethodCall, result: Result){
 
@@ -561,10 +586,20 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
         result.success(true)
     }
 
-    class CustomHit(val eventName: String,
-                        val pageName: String,
-                        val duration: Long,
-                        val properties: Map<String, String>)
+    class CustomHit {
+        val eventName: String
+        val pageName: String
+        val duration: Long
+        val properties: Map<String, String>
+
+        constructor(eventName: String, pageName: String, duration: Long, properties: Map<String, String>) {
+            this.eventName = eventName
+            this.pageName = pageName
+            this.duration = duration
+            this.properties = properties
+        }
+    }
+
     // 自定义事件埋点
     private fun customHitAnalytics(call: MethodCall, result: Result){
 
