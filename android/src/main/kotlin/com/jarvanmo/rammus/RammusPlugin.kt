@@ -20,6 +20,7 @@ import com.alibaba.sdk.android.push.CommonCallback
 import com.alibaba.sdk.android.push.huawei.HuaWeiRegister
 import com.alibaba.sdk.android.push.noonesdk.PushServiceFactory
 import com.alibaba.sdk.android.push.register.*
+import org.jetbrains.kotlin.*
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -524,7 +525,7 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
 
     /// 移动数据分析
 
-    class UserHit(val usernick: String)
+    class UserHit @JSONCreator constructor(val usernick: String)
     //
     private fun userRegister(call: MethodCall, result: Result){
         val jsonString = call.arguments as String?
@@ -532,7 +533,7 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
         MANServiceProvider.getService().getMANAnalytics().userRegister(jsonObj.usernick)
     }
 
-    class UserUpdateHit(val usernick: String,
+    class UserUpdateHit @JSONCreator constructor(val usernick: String,
                         val userid: String)
     // 用户信息
     private fun updateUserAccount(call: MethodCall, result: Result){
@@ -542,7 +543,7 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
     }
 
 
-    class PageHit(val pageName: String,
+    class PageHit @JSONCreator constructor(val pageName: String,
                        val referPageName: String,
                        val duration: Long,
                        val properties: Map<String, String>)
@@ -561,7 +562,7 @@ class RammusPlugin(private val registrar: Registrar, private val methodChannel: 
         result.success(true)
     }
 
-    class CustomHit(val eventName: String,
+    class CustomHit @JSONCreator constructor(val eventName: String,
                         val pageName: String,
                         val duration: Long,
                         val properties: Map<String, String>)
